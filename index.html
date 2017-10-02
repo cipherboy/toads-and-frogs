@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Toads and Frogs</title>
+        <script>
+            function buildBoard() {
+                var e_n = document.getElementById('n');
+                var n_v = e_n.value;
+                var e_b = document.getElementById('board');
+                e_b.innerHTML = '';
+                for (var i = 1; i <= n_v; i++) {
+                    e_b.innerHTML += '<td id="s' + i + '"><input id="i' + i + '" class="square" type="text" val=""></td>';
+                    var e_d = document.getElementById('s' + i);
+                    e_d.onclick = function() { };
+                }
+            }
+
+            function playGame() {
+                var e_n = document.getElementById('n');
+                var n_v = e_n.value;
+                for (var i = 1; i <= n_v; i++) {
+                    var e_i = document.getElementById('i' + i);
+                    console.log("I");
+                    console.log(i);
+                    console.log(e_i);
+                    var i_v = e_i.value;
+                    var e_d = document.getElementById('s' + i);
+                    if (i_v == 't' || i_v == 'T') {
+                        e_d.innerHTML = 'T';
+                    } else if (i_v == 'f' || i_v == 'F') {
+                        e_d.innerHTML = 'F';
+                    } else {
+                        e_d.innerHTML = '&#x25a1;';
+                    }
+                    e_d.onclick = (function(j) {
+                        return function() {
+                            playSquare(j);
+                        }
+                    })(i);
+                    console.log("I");
+                    console.log(i);
+                }
+            }
+
+            function isToad(i) {
+                var s = parseInt(i);
+                var e_n = document.getElementById('n');
+                var n_v = e_n.value;
+
+                if (s > n_v || s < 1) {
+                    return false;
+                }
+
+                var e_s = document.getElementById('s' + s);
+                var s_v = e_s.innerHTML;
+
+                return (s_v == 'T' || s_v == 't');
+            }
+
+            function isFrog(i) {
+                var s = parseInt(i);
+                var e_n = document.getElementById('n');
+                var n_v = e_n.value;
+
+                if (s > n_v || s < 1) {
+                    return false;
+                }
+
+                var e_s = document.getElementById('s' + s);
+                var s_v = e_s.innerHTML;
+
+                return (s_v == 'F' || s_v == 'f');
+            }
+
+            function isEmpty(i) {
+                var s = parseInt(i);
+                var e_n = document.getElementById('n');
+                var n_v = e_n.value;
+
+                if (s > n_v || s < 1) {
+                    return false;
+                }
+
+                var e_s = document.getElementById('s' + s);
+                var s_v = e_s.innerHTML;
+
+                return (s_v != 'T' && s_v != 'F');
+            }
+
+            function setSquare(i, mark) {
+                var s = parseInt(i);
+                var e_n = document.getElementById('n');
+                var n_v = e_n.value;
+
+                if (s > n_v || s < 1) {
+                    return false;
+                }
+
+                var e_s = document.getElementById('s' + s);
+                if (mark == 'T') {
+                    e_s.innerHTML = 'T';
+                } else if (mark == 'F') {
+                    e_s.innerHTML = 'F';
+                } else {
+                    e_s.innerHTML = '&#x25a1;';
+                }
+
+                return true;
+            }
+
+            function playSquare(i) {
+                var s = parseInt(i);
+                console.log(s);
+                var e_n = document.getElementById('n');
+                var n_v = e_n.value;
+                console.log(n_v);
+                var e_s = document.getElementById('s' + s);
+                var s_v = e_s.innerHTML;
+                console.log(s);
+                if (isToad(s) && isEmpty(s+1)) {
+                    setSquare(s, 'E');
+                    setSquare(s+1, 'T');
+                } else if (isToad(s) && isFrog(s+1) && isEmpty(s+2)) {
+                    setSquare(s, 'E');
+                    setSquare(s+2, 'T');
+                } else if (isFrog(s) && isEmpty(s-1)) {
+                    setSquare(s, 'E');
+                    setSquare(s-1, 'F');
+                } else if (isFrog(s) && isToad(s-1) && isEmpty(s-2)) {
+                    setSquare(s, 'E');
+                    setSquare(s-2, 'F');
+                }
+            }
+        </script>
+        <style>
+            td {
+                width: 40px;
+                height: 40px;
+                font-size: 35px;
+            }
+            input.square {
+                width: 35px;
+                height: 35px;
+                font-size: 25px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="left">
+            <h1>Toads and Frogs</h1>
+            <h2>Rules</h2>
+            <p>
+                Players: Left (Toads) and Right (Frogs) <br>
+                Board: 1 x <b>n</b> <br>
+                Game play: Each player takes turns making valid moves. Play starts with left. <br>
+                Left player valid moves: Move a toad one square towards the right, if that square is empty, or hop over a frog immediately to its right, if the adjacent space to the frog is empty. <br>
+                T&#x25a1; &rarr; &#x25a1;T <br>
+                TF&#x25a1; &rarr; &#x25a1;FT <br>
+                Right player valid moves: Move a frog one square towards the left, if that square is empty, or hop over a toad immediately to its left, if the adjacent space to the toad is empty. <br>
+                &#x25a1;F &rarr; F&#x25a1; <br>
+                &#x25a1;TF &rarr; FT&#x25a1; <br>
+                Victory: Last person to move wins.
+            </p>
+        </div>
+        <div class="right">
+            1 x <input id="n" type="number" min="1" max="1000" value="4"> <br>
+            <button onclick="buildBoard();">Build</button> <button onclick="playGame();">Play</button>
+            <table>
+                <tr id="board">
+                    <td id="s1" onclick="playSquare(1);">T</td>
+                    <td id="s2" onclick="playSquare(2);">&#x25a1;</td>
+                    <td id="s3" onclick="playSquare(3);">&#x25a1;</td>
+                    <td id="s4" onclick="playSquare(4);">F</td>
+                </tr>
+            </table>
+        </div>
+    </body>
+</html>
